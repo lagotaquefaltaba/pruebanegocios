@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" sizes="192x192" href="https://i.imgur.com/lJeqohq.jpeg">
+<link rel="apple-touch-icon" href="https://i.imgur.com/lJeqohq.jpeg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Demo Negocios</title>
+
+<link rel="manifest" href="manifest.json">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js');
+  });
+}
+</script>
+
+<meta name="theme-color" content="#000000">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#000;padding:10px;padding-bottom:90px;}
+.contenedor{max-width:450px;margin:auto;background:#111;border-radius:30px;box-shadow:0 0 20px rgba(255,0,255,0.3);padding:25px;text-align:center;border:1px solid #333}
+
+.logo-radio{width:150px;height:150px;border-radius:50%;margin-bottom:20px;border:4px solid #ff00ff;object-fit:cover; animation: pulso 2s infinite;}
+@keyframes pulso { 0% {box-shadow: 0 0 0 0 rgba(255,0,255, 0.7);} 70% {box-shadow: 0 0 0 15px rgba(255,0,255, 0);} 100% {box-shadow: 0 0 0 0 rgba(255,0,255, 0);} }
+
+h1{color:#fff;font-size:26px;margin-bottom:25px;text-transform:uppercase;letter-spacing:3px; animation: parpadeo 1.5s infinite;}
+@keyframes parpadeo { 0% {text-shadow: 0 0 5px #ff00ff;} 50% {text-shadow: 0 0 20px #ff00ff;} 100% {text-shadow: 0 0 5px #ff00ff;} }
+
+.grid-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.boton{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:20px;color:#fff;text-decoration:none;font-size:14px;font-weight:bold;transition:0.3s;border:2px solid #ff00ff;background:transparent;cursor:pointer; animation: bordeNeon 3s infinite;}
+@keyframes bordeNeon { 0% {border-color: #ff00ff;} 50% {border-color: #00d2ff;} 100% {border-color: #ff00ff;} }
+.boton:hover{background:#ff00ff;color:#000}
+.full-width { grid-column: span 2; }
+.btn-destacado{background:linear-gradient(45deg, #ff00ff, #7000ff); border:none; color:#fff;}
+
+.contenido-seccion { display: none; margin-top: 20px; background:#222; padding:15px; border-radius:15px; border:1px solid #ff00ff; }
+.gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gallery-grid img { width: 100%; border-radius: 10px; cursor: pointer; }
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; }
+.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+#modalZoom { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center; align-items: center; }
+#modalImg { max-width: 90%; max-height: 75%; border-radius: 10px; border: 2px solid #ff00ff; }
+.btn-descargar { margin-top: 15px; padding: 10px 25px; background: #00d2ff; color: #000; border-radius: 20px; text-decoration: none; font-weight: bold; cursor: pointer; }
+
+.boton-instalar-nuevo{display:none;position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:#ff00ff;color:#fff;border:none;padding:15px 35px;font-size:15px;font-weight:bold;border-radius:50px;cursor:pointer;box-shadow:0 0 20px #ff00ff;z-index:9999;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<div id="modalZoom">
+    <img id="modalImg" src="" alt="Zoom" onclick="cerrarZoom()">
+    <a id="linkDescarga" href="" download class="btn-descargar">⬇️ DESCARGAR FOTO</a>
+    <button style="margin-top:10px; background:transparent; border:none; color:white; cursor:pointer;" onclick="cerrarZoom()">Cerrar</button>
+</div>
+
+<div class="contenedor">
+    <img class="logo-radio" src="https://i.imgur.com/lJeqohq.jpeg" alt="Logo Demo">
+    <h1>TU NEGOCIO AQUÍ</h1>
+
+    <div class="grid-botones">
+        <a class="boton full-width btn-destacado" href="#" target="_blank">Reservas / Pedidos 📦</a>
+        <button class="boton full-width btn-destacado" onclick="alert('Funcionalidad de pagos activa')">🎟️ PROMOCIONES / SERVICIOS</button>
+        <button class="boton full-width btn-destacado" onclick="toggleSeccion('finde-contenido')">🔥 NOVEDADES</button>
+        <button class="boton" onclick="toggleSeccion('galeria-contenido')">Galería</button>
+        <button class="boton" onclick="toggleSeccion('video-contenido')">Videos</button>
+        <a class="boton" href="#" target="_blank">Facebook</a>
+        <a class="boton" href="#" target="_blank">Instagram</a>
+        <a class="boton full-width" href="#" target="_blank">Contacto / Ubicación 📍</a>
+    </div>
+
+    <div id="finde-contenido" class="contenido-seccion">
+        <p style="color:#fff;">Próximamente novedades...</p>
+    </div>
+
+    <div id="galeria-contenido" class="contenido-seccion">
+        <div class="gallery-grid">
+            <img src="https://i.imgur.com/pbg6AuH.jpeg" onclick="abrirZoom(this.src)">
+            <img src="https://i.imgur.com/GesBT4d.jpeg" onclick="abrirZoom(this.src)">
+        </div>
+    </div>
+
+    <div id="video-contenido" class="contenido-seccion">
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/live_stream?channel=UC5l4H5_f11z28j3M8y-Y3gA" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<button id="botonInstalar" class="boton-instalar-nuevo">📲 INSTALAR APP</button>
+
+<script>
+function toggleSeccion(id) {
+    var secciones = document.getElementsByClassName("contenido-seccion");
+    for (var i = 0; i < secciones.length; i++) { secciones[i].style.display = "none"; }
+    var mostrar = document.getElementById(id);
+    mostrar.style.display = (mostrar.style.display === "block") ? "none" : "block";
+}
+
+function abrirZoom(src) {
+    document.getElementById("modalImg").src = src;
+    document.getElementById("linkDescarga").href = src;
+    document.getElementById("linkDescarga").setAttribute("download", "foto_demo.jpg");
+    document.getElementById("modalZoom").style.display = "flex";
+}
+function cerrarZoom() { document.getElementById("modalZoom").style.display = "none"; }
+
+let eventoInstalar;
+const botonInstalar = document.getElementById('botonInstalar');
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    eventoInstalar = e;
+    botonInstalar.style.display = 'block';
+});
+botonInstalar.addEventListener('click', async () => {
+    if (eventoInstalar) { eventoInstalar.prompt(); }
+});
+</script>
+</body>
+</html>
